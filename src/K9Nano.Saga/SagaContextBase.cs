@@ -10,17 +10,36 @@ namespace K9Nano.Saga
         protected SagaContextBase()
         {
             Errors = new List<Exception>();
-            Success = true;
+            _success = true;
             ExecutedSteps = new List<string>();
-            Current = -1;
         }
 
-        public bool Success { get; set; }
+        private bool _success;
+
+        public bool Success
+        {
+            get => _success;
+            set
+            {
+                if (_success)
+                {
+                    if (!value)
+                    {
+                        _success = false;
+                    }
+                }
+                else
+                {
+                    if (!value)
+                    {
+                        throw new SagaException("Can not change Success from false to true");
+                    }
+                }
+            }
+        }
 
         public AggregateException? Error => Success ? null : new AggregateException(Errors);
-
-        public int Current { get; set; }
-
+        
         public IList<string> ExecutedSteps { get; }
 
         public virtual void SetError(Exception exception)

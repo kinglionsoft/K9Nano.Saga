@@ -19,13 +19,12 @@ namespace K9Nano.Saga
             {
                 throw new SagaException("Can not start with a null context");
             }
-            while (_container.TryGetNext(context, out ISagaStep<TContext>? next))
+            while (_container.MoveNext(context))
             {
+                var next = _container.NextStep;
+
                 if (context.Success)
                 {
-                    context.Current++;
-
-#pragma warning disable CS8602 // 取消引用可能出现的空引用。
                     context.ExecutedSteps.Add(next.Name);
                     try
                     {
@@ -33,29 +32,22 @@ namespace K9Nano.Saga
                     }
                     catch (Exception ex)
                     {
-                        context.SetError(new SagaException(next.Name, context.Current, false, ex));
-                        // Increase Current for compensating itself
-                        context.Current++;
+                        context.SetError(new SagaException(next.Name, false, ex));
                     }
-
-#pragma warning restore CS8602 // 取消引用可能出现的空引用。
 
                 }
                 else
                 {
-                    context.Current--;
-#pragma warning disable CS8602 // 取消引用可能出现的空引用。
                     if (next.Compensate != null)
                     {
                         context.ExecutedSteps.Add(next.Name);
-#pragma warning restore CS8602 // 取消引用可能出现的空引用。
                         try
                         {
                             await next.Compensate.Invoke(context);
                         }
                         catch (Exception ex)
                         {
-                            var sagaEx = new SagaException(next.Name, context.Current, true, ex);
+                            var sagaEx = new SagaException(next.Name, true, ex);
                             context.SetError(sagaEx);
                             if (next.StopIfError)
                             {

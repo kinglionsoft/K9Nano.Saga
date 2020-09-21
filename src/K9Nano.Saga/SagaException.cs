@@ -7,11 +7,6 @@ namespace K9Nano.Saga
     public class SagaException : Exception
     {
         /// <summary>
-        /// Index of the step
-        /// </summary>
-        public int Index { get; set; }
-
-        /// <summary>
         /// Name of the step
         /// </summary>
         public string? StepName { get; set; }
@@ -25,10 +20,9 @@ namespace K9Nano.Saga
         {
         }
 
-        public SagaException(string stepName,  int index, bool isCompensating, Exception inner): this(inner.Message, inner)
+        public SagaException(string stepName, bool isCompensating, Exception inner): this(inner.Message, inner)
         {
             StepName = stepName;
-            Index = index;
             IsCompensating = isCompensating;
         }
 

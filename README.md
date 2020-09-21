@@ -59,27 +59,27 @@ var context = await SagaHelper
 public async Task RunToEnd()
 {
     var context = await SagaHelper
-            .StartsWith(() => new ValueTask<CustomContext>(new CustomContext()))
-            .Then(ctx =>
-            {
-                ctx.Value += "1";
+        .StartsWith(() => new ValueTask<CustomContext>(new CustomContext()))
+        .Then(ctx =>
+        {
+            ctx.Value += "1";
 
-                return new ValueTask();
-            }, "step1")
-            .Then(ctx =>
-            {
-                ctx.Value += "2";
+            return new ValueTask();
+        }, "step1")
+        .Then(ctx =>
+        {
+            ctx.Value += "2";
 
-                return new ValueTask();
-            }, "step2")
-            .Then(ctx =>
-            {
-                ctx.Value += "3";
+            return new ValueTask();
+        }, "step2")
+        .Then(ctx =>
+        {
+            ctx.Value += "3";
 
-                return new ValueTask();
-            })
-            .Build()
-            .ExecuteAsync()
+            return new ValueTask();
+        })
+        .Build()
+        .ExecuteAsync()
         ;
 
     context.ExecutedSteps.Should().BeEquivalentTo(new[] { "step1", "step2", "step-2" });

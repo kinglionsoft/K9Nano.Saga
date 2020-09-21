@@ -7,8 +7,6 @@ namespace K9Nano.Saga
     {
         bool Success { get; set; }
 
-        int Current { get; set; }
-
         IList<string> ExecutedSteps { get; }
 
         AggregateException? Error { get; }

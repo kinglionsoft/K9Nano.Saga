@@ -156,7 +156,6 @@ namespace SagaTest
 
             var sagaEx = (context.Error.InnerExceptions[0] as SagaException);
             sagaEx.StepName.Should().Be("step2");
-            sagaEx.Index.Should().Be(2);
             sagaEx.Message.Should().Be("test");
 
             context.ExecutedSteps.Should().BeEquivalentTo(new[] { "step1", "step-nothing", "step2", "step2", "step1" });
@@ -227,7 +226,6 @@ namespace SagaTest
 
             var sagaEx = (context.Error.InnerExceptions[0] as SagaException);
             sagaEx.StepName.Should().Be("step2");
-            sagaEx.Index.Should().Be(2);
             sagaEx.Message.Should().Be("test");
 
             context.ExecutedSteps.Should()

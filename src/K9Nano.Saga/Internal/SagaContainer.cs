@@ -6,9 +6,11 @@ namespace K9Nano.Saga
 {
     internal class SagaContainer<TContext> where TContext : ISagaContext
     {
-        protected readonly IList<ISagaStep<TContext>> Sagas = new List<ISagaStep<TContext>>();
+        private bool _firstCompensate = true;
 
-        public SagaStartDelegate<TContext> Start { get; }
+        protected readonly LinkedList<ISagaStep<TContext>> Sagas = new LinkedList<ISagaStep<TContext>>();
+
+        protected LinkedListNode<ISagaStep<TContext>>? Current { get; set; }
 
         public SagaContainer(SagaStartDelegate<TContext> start)
         {
@@ -16,6 +18,10 @@ namespace K9Nano.Saga
         }
 
         public bool IsEmpty => Sagas.Count == 0;
+
+        public SagaStartDelegate<TContext> Start { get; }
+
+        public ISagaStep<TContext> NextStep => Current?.Value ?? throw new SagaException("Please make sure that MoveNext has returned true");
 
         public ISagaStep<TContext> Add(SagaDelegate<TContext> step, ISagaBuilder<TContext> builder, string? name)
         {
@@ -25,36 +31,57 @@ namespace K9Nano.Saga
                 throw new SagaException($"Step with name ({stepName}) is already exists.");
             }
             var saga = new SagaStep<TContext>(step, builder, stepName);
-            Sagas.Add(saga);
+            Sagas.AddLast(saga);
             return saga;
         }
 
-        public bool TryGetNext(TContext context, out ISagaStep<TContext>? next)
+        public bool MoveNext(TContext context)
         {
-            if (context.Current < -1 || context.Current >= Sagas.Count)
+            if (Current == null)
             {
-                throw new SagaException("Current of ISagaContext is invalid");
+                if (context.Success)
+                {
+                    Current = Sagas.First;
+                    return true;
+                }
+                return false;
             }
 
             if (context.Success)
             {
-                if (context.Current == Sagas.Count - 1)
+                // First
+                if (Current == null)
                 {
-                    next = null;
+                    Current = Sagas.First;
+                    return true;
+                }
+
+                if (Current.Next == null)
+                {
+                    Current = null;
                     return false;
                 }
 
-                next = Sagas[context.Current + 1];
+                Current = Current.Next;
                 return true;
             }
 
-            if (context.Current == 0)
+            // Compensating
+
+            if (_firstCompensate)
             {
-                next = null;
+                // Compensating itself
+                _firstCompensate = false;
+                return true;
+            }
+
+            if (Current.Previous == null)
+            {
+                Current = null;
                 return false;
             }
 
-            next = Sagas[context.Current - 1];
+            Current = Current.Previous;
             return true;
         }
     }
