@@ -39,14 +39,14 @@ namespace K9Nano.Saga
             return this;
         }
 
-        public ISagaStep<TContext> CompensateWith(Func<TContext, ValueTask> start, bool stopIfError = false)
+        public ISagaStep<TContext> CompensateWith(Func<TContext, Task> start, bool stopIfError = false)
         {
             Compensate = ctx => start(ctx);
             StopIfError = stopIfError;
             return this;
         }
 
-        public ISagaStep<TContext> Then(Func<TContext, ValueTask> start, string? name = null)
+        public ISagaStep<TContext> Then(Func<TContext, Task> start, string? name = null)
         {
             return _builder.Then(start, name);
         }

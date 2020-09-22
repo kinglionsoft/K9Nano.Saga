@@ -22,26 +22,26 @@ namespace SagaTest
         public async Task RetryAndSuccess()
         {
             var context = await SagaHelper
-                    .StartsWith(() => new ValueTask<SagaContext>(new SagaContext()))
+                    .StartsWith(() =>Task.FromResult(new SagaContext()))
                     .Then(ctx =>
                     {
                         ctx.SetState("key", new List<int> { 1 });
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step1")
                     .Then(ctx =>
                     {
                         _testOutputHelper.WriteLine("step2  running");
                         ctx.GetState<List<int>>("key").Add(2);
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step2")
                         .Retry(3)
                     .Then(ctx =>
                     {
                         ctx.GetState<List<int>>("key").Add(3);
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     })
                     .Build()
                     .ExecuteAsync()
@@ -60,12 +60,12 @@ namespace SagaTest
             int count = 0;
 
             var context = await SagaHelper
-                    .StartsWith(() => new ValueTask<SagaContext>(new SagaContext()))
+                    .StartsWith(() => Task.FromResult(new SagaContext()))
                     .Then(ctx =>
                     {
                         ctx.SetState("key", new List<int> { 1 });
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step1")
                     .Then(ctx =>
                     {
@@ -77,14 +77,14 @@ namespace SagaTest
                         }
                         ctx.GetState<List<int>>("key").Add(2);
                         _testOutputHelper.WriteLine("step2 running success");
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step2")
                     .Retry(3)
                     .Then(ctx =>
                     {
                         ctx.GetState<List<int>>("key").Add(3);
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     })
                     .Build()
                     .ExecuteAsync()
@@ -101,12 +101,12 @@ namespace SagaTest
         public async Task RetryAndCompensate()
         {
             var context = await SagaHelper
-                    .StartsWith(() => new ValueTask<SagaContext>(new SagaContext()))
+                    .StartsWith(() => Task.FromResult(new SagaContext()))
                     .Then(ctx =>
                     {
                         ctx.SetState("key", new List<int> { 1 });
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step1")
                     .Then(ctx =>
                     {
@@ -121,13 +121,13 @@ namespace SagaTest
                             // !!! BE CAREFUL
                             // ctx.GetState<List<int>>("key").Add(2);  has been called 4 times
                             ctx.GetState<List<int>>("key").RemoveRange(1, 4);
-                            return new ValueTask();
+                            return Task.CompletedTask;
                         })
                     .Then(ctx =>
                     {
                         ctx.GetState<List<int>>("key").Add(3);
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     })
                     .Build()
                     .ExecuteAsync()

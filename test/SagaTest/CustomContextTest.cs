@@ -13,24 +13,24 @@ namespace SagaTest
         public async Task RunToEnd()
         {
             var context = await SagaHelper
-                    .StartsWith(() => new ValueTask<CustomContext>(new CustomContext()))
+                    .StartsWith(() => Task.FromResult(new CustomContext()))
                     .Then(ctx =>
                     {
                         ctx.Value += "1";
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step1")
                     .Then(ctx =>
                     {
                         ctx.Value += "2";
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step2")
                     .Then(ctx =>
                     {
                         ctx.Value += "3";
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     })
                     .Build()
                     .ExecuteAsync()

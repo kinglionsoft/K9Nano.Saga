@@ -36,7 +36,7 @@ namespace K9Nano.Saga
         /// <param name="start"></param>
         /// <param name="stopIfError"></param>
         /// <returns></returns>
-        ISagaStep<TContext> CompensateWith(Func<TContext, ValueTask> start, bool stopIfError = false);
+        ISagaStep<TContext> CompensateWith(Func<TContext, Task> start, bool stopIfError = false);
 
         /// <summary>
         /// Start next step
@@ -44,7 +44,7 @@ namespace K9Nano.Saga
         /// <param name="start"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        ISagaStep<TContext> Then(Func<TContext, ValueTask> start, string? name = null);
+        ISagaStep<TContext> Then(Func<TContext, Task> start, string? name = null);
 
         /// <summary>
         /// Build the saga pipeline

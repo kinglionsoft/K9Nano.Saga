@@ -2,5 +2,5 @@
 
 namespace K9Nano.Saga
 {
-    public delegate ValueTask<TContext> SagaStartDelegate<TContext>();
+    public delegate Task<TContext> SagaStartDelegate<TContext>();
 }

@@ -5,7 +5,7 @@ namespace K9Nano.Saga
 {
     public static class SagaHelper
     {
-        public static ISagaBuilder<TContext> StartsWith<TContext>(Func<ValueTask<TContext>> start) where TContext : ISagaContext
+        public static ISagaBuilder<TContext> StartsWith<TContext>(Func<Task<TContext>> start) where TContext : ISagaContext
         {
             var builder = new SagaBuilder<TContext>()
                 .StartsWith(start);
@@ -13,7 +13,7 @@ namespace K9Nano.Saga
             return builder;
         }
 
-        public static ISagaBuilder StartsWith(Func<ValueTask<SagaContext>> start)
+        public static ISagaBuilder StartsWith(Func<Task<SagaContext>> start)
         {
             ISagaBuilder builder = new SagaBuilder();
             builder.StartsWith(start);

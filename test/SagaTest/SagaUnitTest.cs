@@ -13,24 +13,24 @@ namespace SagaTest
         public async Task RunToEnd()
         {
             var context = await SagaHelper
-                 .StartsWith(() => new ValueTask<SagaContext>(new SagaContext()))
+                 .StartsWith(() => Task.FromResult(new SagaContext()))
                  .Then(ctx =>
                  {
                      ctx.SetState("key", new List<int> { 1 });
 
-                     return new ValueTask();
+                     return Task.CompletedTask;
                  }, "step1")
                  .Then(ctx =>
                  {
                      ctx.GetState<List<int>>("key").Add(2);
 
-                     return new ValueTask();
+                     return Task.CompletedTask;
                  }, "step2")
                  .Then(ctx =>
                  {
                      ctx.GetState<List<int>>("key").Add(3);
 
-                     return new ValueTask();
+                     return Task.CompletedTask;
                  })
                  .Build()
                  .ExecuteAsync()
@@ -47,24 +47,24 @@ namespace SagaTest
         public async Task RunToFailed()
         {
             var context = await SagaHelper
-                    .StartsWith(() => new ValueTask<SagaContext>(new SagaContext()))
+                    .StartsWith(() => Task.FromResult(new SagaContext()))
                     .Then(ctx =>
                     {
                         ctx.SetState("key", new List<int> { 1 });
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step1")
                     .Then(ctx =>
                     {
                         ctx.GetState<List<int>>("key").Add(2);
                         ctx.Success = false;
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step2")
                     .Then(ctx =>
                     {
                         ctx.GetState<List<int>>("key").Add(3);
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step3")
                     .Build()
                     .ExecuteAsync()
@@ -79,12 +79,12 @@ namespace SagaTest
         public async Task RunToError()
         {
             var context = await SagaHelper
-                    .StartsWith(() => new ValueTask<SagaContext>(new SagaContext()))
+                    .StartsWith(() => Task.FromResult(new SagaContext()))
                     .Then(ctx =>
                     {
                         ctx.SetState("key", new List<int> { 1 });
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step1")
                     .Then(ctx =>
                     {
@@ -95,7 +95,7 @@ namespace SagaTest
                     {
                         ctx.GetState<List<int>>("key").Add(3);
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step3")
                     .Build()
                     .ExecuteAsync()
@@ -110,23 +110,23 @@ namespace SagaTest
         public async Task Compensate()
         {
             var context = await SagaHelper
-                    .StartsWith(() => new ValueTask<SagaContext>(new SagaContext()))
+                    .StartsWith(() => Task.FromResult(new SagaContext()))
                     .Then(ctx =>
                     {
                         ctx.SetState("key", new List<int> { 1 });
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step1")
                         .CompensateWith(ctx =>
                         {
                             ctx.GetState<List<int>>("key").RemoveAt(0);
-                            return new ValueTask();
+                            return Task.CompletedTask;
                         })
 
                     .Then(ctx =>
                     {
                         // do nothing 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step-nothing")
 
                     .Then(ctx =>
@@ -137,14 +137,14 @@ namespace SagaTest
                         .CompensateWith(ctx =>
                         {
                             ctx.GetState<List<int>>("key").RemoveAt(1);
-                            return new ValueTask();
+                            return Task.CompletedTask;
                         })
 
                     .Then(ctx =>
                     {
                         ctx.GetState<List<int>>("key").Add(3);
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step3")
                     .Build()
                     .ExecuteAsync()
@@ -171,23 +171,23 @@ namespace SagaTest
             try
             {
                 await SagaHelper
-                    .StartsWith(() => new ValueTask<SagaContext>(context))
+                    .StartsWith(() => Task.FromResult(context))
                     .Then(ctx =>
                     {
                         ctx.SetState("key", new List<int> { 1 });
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step1")
                         .CompensateWith(ctx =>
                         {
                             ctx.GetState<List<int>>("key").RemoveAt(0);
-                            return new ValueTask();
+                            return Task.CompletedTask;
                         })
 
                     .Then(ctx =>
                     {
                         // do nothing 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step-nothing")
                          .CompensateWith(ctx =>
                         {
@@ -202,14 +202,14 @@ namespace SagaTest
                         .CompensateWith(ctx =>
                         {
                             ctx.GetState<List<int>>("key").RemoveAt(1);
-                            return new ValueTask();
+                            return Task.CompletedTask;
                         })
 
                     .Then(ctx =>
                     {
                         ctx.GetState<List<int>>("key").Add(3);
 
-                        return new ValueTask();
+                        return Task.CompletedTask;
                     }, "step3")
                     .Build()
                     .ExecuteAsync()

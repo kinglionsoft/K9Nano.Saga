@@ -9,20 +9,20 @@ namespace K9Nano.Saga
         private SagaContainer<TContext> _container;
 #pragma warning restore 8618
 
-        public ISagaBuilder<TContext> StartsWith(Func<ValueTask<TContext>> start)
+        public ISagaBuilder<TContext> StartsWith(Func<Task<TContext>> start)
         {
             _container = new SagaContainer<TContext>(StartDelegate);
 
             return this;
 
-            ValueTask<TContext> StartDelegate() => start();
+            Task<TContext> StartDelegate() => start();
         }
 
-        public ISagaStep<TContext> Then(Func<TContext, ValueTask> then, string? name = null)
+        public ISagaStep<TContext> Then(Func<TContext, Task> then, string? name = null)
         {
             return _container.Add(Next, this, name);
 
-            ValueTask Next(TContext context) => then(context);
+            Task Next(TContext context) => then(context);
         }
 
         public ISagaInvoker<TContext> Build()

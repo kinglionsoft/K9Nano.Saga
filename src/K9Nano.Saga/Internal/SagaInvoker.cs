@@ -12,7 +12,7 @@ namespace K9Nano.Saga
             _container = container;
         }
 
-        public async ValueTask<TContext> ExecuteAsync()
+        public async Task<TContext> ExecuteAsync()
         {
             var context = await _container.Start();
             if (context == null)
