@@ -1,7 +1,11 @@
 ﻿<Project>
   <PropertyGroup>
     <Authors>K9</Authors>
-    <Version>0.0.3</Version>
+    <Version>1.0.0</Version>
     <Description>A lightweight SAGA component.</Description>
+    <PackageProjectUrl>https://github.com/kinglionsoft/K9Nano.Saga</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/kinglionsoft/K9Nano.Saga</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Saga Compensate</PackageTags>
   </PropertyGroup>
 </Project>

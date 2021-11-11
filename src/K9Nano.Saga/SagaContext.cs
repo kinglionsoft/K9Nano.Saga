@@ -32,11 +32,7 @@ namespace K9Nano.Saga
         {
             if (TryGetState(state, out var valObj))
             {
-#pragma warning disable 8605
-#pragma warning disable CS8601 // 可能的 null 引用赋值。
-                value = (T)valObj;
-#pragma warning restore CS8601 // 可能的 null 引用赋值。
-#pragma warning restore 8605
+                value = (T)valObj!;
                 return true;
             }
 
